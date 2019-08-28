@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -40,6 +42,34 @@ class Command
      * @ORM\Column(type="float")
      */
     private $total_command;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="commands")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $user;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\Tablemeal", inversedBy="commands")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $tablemeal;
+
+    /**
+     * @ORM\ManyToMany(targetEntity="App\Entity\Food", inversedBy="commands")
+     */
+    private $foods;
+
+    /**
+     * @ORM\ManyToMany(targetEntity="App\Entity\Accounts", inversedBy="commands")
+     */
+    private $accounts;
+
+    public function __construct()
+    {
+        $this->foods = new ArrayCollection();
+        $this->accounts = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -102,6 +132,82 @@ class Command
     public function setTotalCommand(float $total_command): self
     {
         $this->total_command = $total_command;
+
+        return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): self
+    {
+        $this->user = $user;
+
+        return $this;
+    }
+
+    public function getTablemeal(): ?Tablemeal
+    {
+        return $this->tablemeal;
+    }
+
+    public function setTablemeal(?Tablemeal $tablemeal): self
+    {
+        $this->tablemeal = $tablemeal;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Food[]
+     */
+    public function getFoods(): Collection
+    {
+        return $this->foods;
+    }
+
+    public function addFood(Food $food): self
+    {
+        if (!$this->foods->contains($food)) {
+            $this->foods[] = $food;
+        }
+
+        return $this;
+    }
+
+    public function removeFood(Food $food): self
+    {
+        if ($this->foods->contains($food)) {
+            $this->foods->removeElement($food);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Accounts[]
+     */
+    public function getAccounts(): Collection
+    {
+        return $this->accounts;
+    }
+
+    public function addAccount(Accounts $account): self
+    {
+        if (!$this->accounts->contains($account)) {
+            $this->accounts[] = $account;
+        }
+
+        return $this;
+    }
+
+    public function removeAccount(Accounts $account): self
+    {
+        if ($this->accounts->contains($account)) {
+            $this->accounts->removeElement($account);
+        }
 
         return $this;
     }
